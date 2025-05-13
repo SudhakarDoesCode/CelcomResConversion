@@ -8,7 +8,7 @@ on:
         required: true
         default: 'resume.docx'
       template_filename:
-        description: 'Filename of the template in templates/ (e.g., template.docx)'
+        description: 'Filename of the template in template/ (e.g., template.docx)'
         required: true
         default: 'template.docx'
       output_filename:
@@ -33,7 +33,7 @@ jobs:
 
       - name: Run merge script
         run: |
-          python main.py "templates/${{ github.event.inputs.template_filename }}" \
+          python main.py "template/${{ github.event.inputs.template_filename }}" \
                          "resumes/${{ github.event.inputs.resume_filename }}" \
                          "${{ github.event.inputs.output_filename }}"
 
