@@ -3,24 +3,24 @@ name: Merge Resume into Template
 on:
   workflow_dispatch:
     inputs:
-      template_file:
-        description: 'Path to the template DOCX'
-        required: true
-        default: 'template.docx'
-      resume_file:
-        description: 'Path to the resume DOCX'
+      resume_filename:
+        description: 'Filename of the resume in resumes/ (e.g., resume.docx)'
         required: true
         default: 'resume.docx'
-      output_file:
-        description: 'Name for the output file'
+      template_filename:
+        description: 'Filename of the template in templates/ (e.g., template.docx)'
         required: true
-        default: 'merged_resume.docx'
+        default: 'template.docx'
+      output_filename:
+        description: 'Filename for the output (e.g., output/merged_resume.docx)'
+        required: true
+        default: 'output/merged_resume.docx'
 
 jobs:
   merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -31,12 +31,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Merge resume into template
+      - name: Run merge script
         run: |
-          python main.py "${{ github.event.inputs.template_file }}" "${{ github.event.inputs.resume_file }}" "${{ github.event.inputs.output_file }}"
+          python main.py "templates/${{ github.event.inputs.template_filename }}" \
+                         "resumes/${{ github.event.inputs.resume_filename }}" \
+                         "${{ github.event.inputs.output_filename }}"
 
       - name: Upload merged document
         uses: actions/upload-artifact@v3
         with:
           name: merged-resume
-          path: ${{ github.event.inputs.output_file }}
+          path: ${{ github.event.inputs.output_filename }}
