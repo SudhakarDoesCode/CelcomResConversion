@@ -1,0 +1,42 @@
+name: Merge Resume into Template
+
+on:
+  workflow_dispatch:
+    inputs:
+      template_file:
+        description: 'Path to the template DOCX'
+        required: true
+        default: 'template.docx'
+      resume_file:
+        description: 'Path to the resume DOCX'
+        required: true
+        default: 'resume.docx'
+      output_file:
+        description: 'Name for the output file'
+        required: true
+        default: 'merged_resume.docx'
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Merge resume into template
+        run: |
+          python main.py "${{ github.event.inputs.template_file }}" "${{ github.event.inputs.resume_file }}" "${{ github.event.inputs.output_file }}"
+
+      - name: Upload merged document
+        uses: actions/upload-artifact@v3
+        with:
+          name: merged-resume
+          path: ${{ github.event.inputs.output_file }}
